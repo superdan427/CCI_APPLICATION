@@ -1,0 +1,35 @@
+{
+  "garment_id": "COS02",
+  "style_number": "1317056001",
+  "label_text": "Pleated Wool-Blend Tapered Trousers",
+  "short_desc": "Black Trousers",
+  "brand": "COS",
+  "price": "£119",
+  "country": "Made in Türkiye",
+  "composition": [
+    { "component": "Shell", "fibre": "Polyester", "percentage": 54, "colour": [140, 140, 160] },
+    { "component": "Shell", "fibre": "Wool", "percentage": 44, "colour": [220, 190, 140] },
+    { "component": "Shell", "fibre": "Elastane", "percentage": 2, "colour": [200, 120, 130] }
+  ],
+  "care": "Dry clean",
+  "factory": {
+    "name": "Domino Tekstil Urunleri San. Ve Dis. Tic. AS",
+    "address": "Karacaagac Mah. Karalar Sok. No:3/A, Merkez/Bolu, 14300, Bolu",
+    "country": "Türkiye",
+    "workers": 450,
+    "lat": 40.73,
+    "lng": 31.61
+  },
+  "route": {
+    "from": "Port of Izmir",
+    "to": "Port of Felixstowe",
+    "via": "Aegean → Gebze → Tekirdağ → Piraeus → Gioia Tauro → Sines → Bay of Biscay → English Channel"
+  },
+  "media": {
+    "label": "media/COS02/label.jpg",
+    "satellite": "media/COS02/satellite.mp4",
+    "shipping": "media/COS02/shipping.mp4",
+    "cos_page": "media/COS02/cos_page.png",
+    "cos_models": ["media/COS02/model_1.jpg"]
+  }
+}

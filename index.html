@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREADBARE — Factory Zoom</title>
+<script src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"></script><style>
+
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+  }
+
+  #map {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ---------- Caption Panel ---------- */
+  #caption {
+    position: fixed;
+    bottom: 30px;
+    right: 5px;
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.5);           /* subtle dark background */
+    backdrop-filter: blur(2px);                /* very slight blur */
+    border-radius: 0;                          /* clean edges */
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    text-align: right;
+  }
+
+  #caption.visible {
+    opacity: 1;
+  }
+
+  #caption .factory-name {
+    font-size: 11px;
+    color: #fff;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 400;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);     /* only for readability */
+  }
+
+  #caption .factory-detail {
+    font-size: 9px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+  }
+
+  /* ---------- Crosshair ---------- */
+  #crosshair {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+  }
+
+  #crosshair.visible {
+    opacity: 1;
+  }
+
+  #crosshair::before,
+  #crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);     /* subtle white lines */
+  }
+
+  #crosshair::before {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+  }
+
+  #crosshair::after {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+  }
+
+  /* ---------- REC Indicator ---------- */
+  #rec {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  #rec.visible {
+    opacity: 1;
+  }
+
+  #rec .dot {
+    width: 6px;
+    height: 6px;
+    background: #e03535;                       /* simple red */
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+
+  #rec .lbl {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.2em;
+    font-weight: 300;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ---------- Altitude Display ---------- */
+  #altitude {
+    position: fixed;
+    top: 24px;
+    left: 28px;
+    z-index: 100;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 0.2em;
+    opacity: 0;
+    transition: opacity 0.5s;
+    text-shadow: 0 0 4px rgba(0,0,0,0.5);     /* slight shadow */
+  }
+
+  #altitude.visible {
+    opacity: 1;
+  }
+
+  /* ---------- Hint (empty, kept for JS) ---------- */
+  #hint {
+    position: fixed;
+    bottom: 28px;
+    right: 32px;
+    z-index: 100;
+    color: transparent;
+    pointer-events: none;
+  }
+
+  /* ---------- Progress Bar ---------- */
+  #progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);      /* thin, faint line */
+    width: 0%;
+    z-index: 100;
+    transition: width 0.15s linear;
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="progress"></div>
+<div id="rec"><div class="dot"></div><div class="lbl">REC</div></div>
+<div id="altitude">ALTITUDE —</div>
+<div id="crosshair"></div>
+<div id="hint"></div>
+<div id="caption">
+  <div class="factory-name">Shanghai Jingrong Science &amp; </div>
+  <div class="factory-detail">No.299 Yisong Road, Fengxian District, Shanghai, China &nbsp;/&nbsp; 30.9814°N, 121.4449°E</div>
+</div>
+
+<script>
+const TOKEN = 'eyJraWQiOiJQUjM1UkY0Mzg3IiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiIyWTZCN1lUWkhRIiwiaWF0IjoxNzczMjMzMTI2LCJleHAiOjE3NzM5MDM1OTl9.qM6eQ68mgDWeK2_fAZ1uSE3kn6vrxP-x_pnRpMZRVbZ8B5CxF4wSGhjr1FOysPMidb2NZ91Q1DXDKnzcF1QxPA';
+
+const STEPS = [
+
+
+{ lat: 33.0, lng: 115.0, span: 60.0, dur: 0 }, // 0: Earth / Asia — initial position
+
+{ lat: 31.5, lng: 120.0, span: 18.0, dur: 5000 }, // 1: China
+
+{ lat: 31.1, lng: 121.35, span: 3.5, dur: 5000 }, // 2: Shanghai
+
+{ lat: 30.94, lng: 121.44, span: 0.35, dur: 5000 }, // 3: Fengxian District
+
+{ lat: 30.9814, lng: 121.4449, span: 0.025, dur: 5000 }, // 4: Neighbourhood
+
+{ lat: 30.9814, lng: 121.4449, span: 0.003, dur: 5000 }, // 5: Rooftop
+
+];
+
+const TOTAL = STEPS.slice(1).reduce((a, s) => a + s.dur, 0);
+let currentStep = 0;
+let animating = false;
+
+mapkit.init({ authorizationCallback: done => done(TOKEN) });
+
+const map = new mapkit.Map('map', {
+  mapType:             mapkit.Map.MapTypes.Satellite,
+  showsCompass:        mapkit.FeatureVisibility.Hidden,
+  showsScale:          mapkit.FeatureVisibility.Hidden,
+  showsZoomControl:    false,
+  showsMapTypeControl: false,
+  isZoomEnabled:       false,
+  isScrollEnabled:     false,
+  isRotationEnabled:   false,
+});
+
+// Set initial position instantly
+map.region = new mapkit.CoordinateRegion(
+  new mapkit.Coordinate(STEPS[0].lat, STEPS[0].lng),
+  new mapkit.CoordinateSpan(STEPS[0].span, STEPS[0].span)
+);
+
+function fmtAlt(span) {
+  const km = span * 111;
+  if (km >= 1000) return `ALTITUDE  ${(km / 1000).toFixed(0)}M km`;
+  if (km >= 1)    return `ALTITUDE  ${km.toFixed(0)} km`;
+  return `ALTITUDE  ${(km * 1000).toFixed(0)} m`;
+}
+
+function updateAlt(span) {
+  document.getElementById('altitude').textContent = fmtAlt(span);
+}
+
+// Animate one step at a time in either direction
+function animateStep(fromIndex, toIndex) {
+  const prev = STEPS[fromIndex];
+  const step = STEPS[toIndex];
+
+  // Fly the map
+  map.setRegionAnimated(new mapkit.CoordinateRegion(
+    new mapkit.Coordinate(step.lat, step.lng),
+    new mapkit.CoordinateSpan(step.span, step.span)
+  ), true);
+
+  // Animate readouts over the step duration
+  const stepStart = performance.now();
+  const elapsedBefore = STEPS.slice(1, toIndex).reduce((a, s) => a + s.dur, 0);
+
+  function tick(now) {
+    const t = Math.min(1, (now - stepStart) / step.dur);
+    const eased = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    updateAlt(prev.span + (step.span - prev.span) * eased);
+    document.getElementById('progress').style.width =
+      Math.min(100, ((elapsedBefore + t * step.dur) / TOTAL) * 100) + '%';
+    if (t < 1) requestAnimationFrame(tick);
+    else animating = false;
+  }
+
+  animating = true;
+  requestAnimationFrame(tick);
+
+  // Final step — show caption and crosshair
+  if (toIndex === STEPS.length - 1) {
+    setTimeout(() => {
+      document.getElementById('caption').classList.add('visible');
+      document.getElementById('crosshair').classList.add('visible');
+      document.getElementById('hint').style.opacity = '0';
+    }, step.dur);
+  } else {
+    document.getElementById('caption').classList.remove('visible');
+    document.getElementById('crosshair').classList.remove('visible');
+    document.getElementById('hint').style.opacity = '1';
+  }
+}
+
+// ArrowDown zooms in one step. ArrowUp zooms out one step.
+document.addEventListener('keydown', e => {
+  if (animating) return;
+  if (e.code !== 'ArrowDown' && e.code !== 'ArrowUp') return;
+  e.preventDefault();
+  const direction = e.code === 'ArrowDown' ? 1 : -1;
+  const nextStep = currentStep + direction;
+  if (nextStep < 0 || nextStep >= STEPS.length) return;
+  animateStep(currentStep, nextStep);
+  currentStep = nextStep;
+});
+
+// Init UI once map canvas exists
+const poll = setInterval(() => {
+  if (document.querySelector('#map canvas, #map .mk-map-view')) {
+    clearInterval(poll);
+    document.getElementById('altitude').classList.add('visible');
+    document.getElementById('rec').classList.add('visible');
+    updateAlt(STEPS[0].span);
+  }
+}, 100);
+</script>
+</body>
+</html>

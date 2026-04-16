@@ -1,0 +1,33 @@
+{
+  "garment_id": "COS01",
+  "style_number": "1327667002",
+  "label_text": "Interlock Cotton Polo Shirt",
+  "short_desc": "Striped Polo",
+  "brand": "COS",
+  "price": "£45",
+  "country": "Made in Bangladesh",
+  "composition": [
+    { "component": "Shell", "fibre": "Cotton", "percentage": 100, "colour": [180, 210, 180] }
+  ],
+  "care": "Machine wash 40°C",
+  "factory": {
+    "name": "Jinnat Apparels & Fashion Ltd",
+    "address": "Sardagonj Road, Sardagonj, 1349, Gazipur",
+    "country": "Bangladesh",
+    "workers": 5458,
+    "lat": 23.99,
+    "lng": 90.42
+  },
+  "route": {
+    "from": "Port of Chattogram",
+    "to": "Port of Felixstowe",
+    "via": "Bay of Bengal → Colombo → Indian Ocean → Gulf of Aden → Red Sea → Suez Canal → Mediterranean → Gibraltar → English Channel"
+  },
+  "media": {
+    "label": "media/COS01/label.jpg",
+    "satellite": "media/COS01/satellite.mp4",
+    "shipping": "media/COS01/shipping.mp4",
+    "cos_page": "media/COS01/cos_page.png",
+    "cos_models": ["media/COS01/model_1.jpg"]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "garment_id": "COS04",
+  "style_number": "1303284002",
+  "label_text": "Boiled-Wool Cardigan",
+  "short_desc": "Brown Cardigan",
+  "brand": "COS",
+  "price": "£85",
+  "country": "Made in China",
+  "composition": [
+    { "component": "Shell", "fibre": "Wool", "percentage": 100, "colour": [220, 190, 140] }
+  ],
+  "care": "Dry clean only",
+  "factory": {
+    "name": "Shanghai Jingrong Science & Technology Co., Ltd.",
+    "address": "No.299 & No.349 Yisong Road, Fengxian District, 201401, Shanghai",
+    "country": "Mainland China",
+    "workers": 659,
+    "lat": 30.92,
+    "lng": 121.47
+  },
+  "route": {
+    "from": "Port of Shanghai",
+    "to": "Port of Felixstowe",
+    "via": "East China Sea → Nansha → Yantian → South China Sea → Vung Tau → Singapore → Malacca Strait → Indian Ocean → Gulf of Aden → Red Sea → Suez Canal → Mediterranean → Gibraltar → English Channel"
+  },
+  "media": {
+    "label": "media/COS04/label.jpg",
+    "satellite": "media/COS04/satellite.mp4",
+    "shipping": "media/COS04/shipping.mp4",
+    "cos_page": "media/COS04/cos_page.png",
+    "cos_models": ["media/COS04/model_1.jpg"]
+  }
+}

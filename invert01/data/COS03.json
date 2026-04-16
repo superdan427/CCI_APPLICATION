@@ -1,0 +1,33 @@
+{
+  "garment_id": "COS03",
+  "style_number": "1325526003",
+  "label_text": "Clean Cut T-Shirt",
+  "short_desc": "Red T-Shirt",
+  "brand": "COS",
+  "price": "£29",
+  "country": "Made in Vietnam",
+  "composition": [
+    { "component": "Shell", "fibre": "Cotton", "percentage": 100, "colour": [180, 210, 180] }
+  ],
+  "care": "Machine wash 30°C",
+  "factory": {
+    "name": "Hong Kong Fortunate (Vietnam) Fashion Co., Ltd",
+    "address": "Factory B15.1, B15.2, B15.3, D14 Road, Thanh Thanh Cong Industrial Zone, 843375, Tay Ninh",
+    "country": "Vietnam",
+    "workers": 2270,
+    "lat": 11.32,
+    "lng": 106.10
+  },
+  "route": {
+    "from": "Port of Ho Chi Minh",
+    "to": "Port of Felixstowe",
+    "via": "South China Sea → Singapore → Malacca Strait → Indian Ocean → Gulf of Aden → Red Sea → Suez Canal → Mediterranean → Gibraltar → English Channel"
+  },
+  "media": {
+    "label": "media/COS03/label.jpg",
+    "satellite": "media/COS03/satellite.mp4",
+    "shipping": "media/COS03/shipping.mp4",
+    "cos_page": "media/COS03/cos_page.png",
+    "cos_models": ["media/COS03/model_1.jpg"]
+  }
+}
